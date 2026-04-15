@@ -3,6 +3,25 @@ import json
 import argparse
 import os
 
+header_translation = {
+    'Zeit (UTC)': 'Time (UTC)',
+    'Kanal': 'Channel',
+    'Frequenz [kHz]': 'Frequency [kHz]',
+    'UEID': 'UEID',
+    'Label': 'Label',
+    'SNR [dB]': 'SNR [dB]',
+    'Feldstärke [dB]': 'Level [dB]',
+    'Standort': 'Location',
+    'Leistung [kW]': 'Power [kW]',
+    'Entfernung [km]': 'Distance [km]',
+    'Azimut [deg]': 'Azimuth [deg]',
+    'Breitenkreis (TX)': 'Latitude (TX)',
+    'Längenkreis (TX)': 'Longitude (TX)',
+    'Breitenkreis (RX)': 'Latitude (RX)',
+    'Längenkreis (RX)': 'Longitude (RX)',
+}
+
+
 def draw_point_transmitter(tx_name: str, tx_channel: str, tx_tii: int, tx_lon: float, tx_lat: float):
     tx_point = (
         {
@@ -109,6 +128,7 @@ args = parser.parse_args()
 if os.path.isfile(args.csv):
     with open(args.csv) as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';', quotechar='|')
+        reader.fieldnames = [header_translation.get(h, h) for h in reader.fieldnames]  # translates header to English
         sortedlist = sorted(reader, key=lambda row:(row['Main'],row['Sub']), reverse=False)
         sortedListPoly = sorted(sortedlist, key=lambda row:(row['Main'],row['Sub'],row['Azimuth [deg]']), reverse=False)
         sortedListTime = sorted(sortedlist, key=lambda row:(row['Time (UTC)']), reverse=False)
